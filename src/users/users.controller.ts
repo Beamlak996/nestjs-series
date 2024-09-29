@@ -1,29 +1,47 @@
 import { Controller, Get, Param, Post, Body, Patch, Delete, Query } from '@nestjs/common';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-    @Get()
-    findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
-        return []
-    }
+  constructor(private readonly userService: UsersService) {}
 
-    @Get(':id')
-    findOne(@Param('id') id: string){
-        return { id }
-    }
+  @Get()
+  findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
+    return this.userService.findAll(role);
+  }
 
-    @Post()
-    create(@Body() user: {}) {
-        return user
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id);
+  }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() userUpdate: {}) {
-        return { id, ...userUpdate }
-    }
+  @Post()
+  create(
+    @Body()
+    user: {
+      name: string;
+      email: string;
+      role: 'ADMIN' | 'INTERN' | 'ENGINEER';
+    },
+  ) {
+    return this.userService.create(user);
+  }
 
-    @Delete(':id')
-    delete(@Param('id') id: string) {
-        return { id }
-    }
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body()
+    userUpdate: {
+      name?: string;
+      email?: string;
+      role?: 'ADMIN' | 'INTERN' | 'ENGINEER';
+    },
+  ) {
+    return this.userService.udpate(+id, userUpdate)
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.userService.delete(+id);
+  }
 }
